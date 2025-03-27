@@ -3,11 +3,62 @@ import cProfile
 import numpy as np
 import time
 
-from multiprocessing import Pool
+from multiprocessing import Pool, shared_memory, current_process
 
 from .cgp_individual import Individual
 from .utils import is_function_gene, get_possible_input_nodes, get_function_gene, get_input_genes, convert_gt_to_np, convert_function_to_execution_mode
 from .cgp_mutation import Mutation
+
+#taken from: https://stackoverflow.com/questions/31704081/shared-arrays-in-multiprocessing-python
+class SharedNumpyArray:
+    def __init__(self, arr):
+        self._shape = arr.shape
+        self._dtype = arr.dtype
+        self._shm = None
+        self._creator = current_process().pid
+
+        # Initialize shared memory
+        self._acquired_shm = shared_memory.SharedMemory(create=True, size=arr.nbytes)
+        self._name = self._acquired_shm.name
+        _arr = np.ndarray(shape=self._shape, dtype=self._dtype, buffer=self._acquired_shm.buf)
+        _arr[:] = arr[:]
+
+    def __getstate__(self):
+        # If pickle is being used to serialize this instance to another process,
+        # then we do not need to include attribute _acquired_shm.
+
+        if '_acquired_shm' in self.__dict__:
+            state = self.__dict__.copy()
+            del state['_acquired_shm']
+        else:
+            state = self.__dict__
+        return state
+
+    def arr(self):
+        self._shm = shared_memory.SharedMemory(name=self._name)
+        return np.ndarray(shape=self._shape, dtype=self._dtype, buffer=self._shm.buf)
+
+    def __del__(self):
+        if self._shm:
+            self._shm.close()
+
+
+    def close_and_unlink(self):
+        """Called only by the process that created this instance."""
+
+        if current_process().pid != self._creator:
+            raise RuntimeError('Only the creating process may call close_and_unlink')
+
+        if self._shm:
+            self._shm.close()
+            # Prevent __del__ from trying to close _shm again
+            self._shm = None
+
+        if self._acquired_shm:
+            self._acquired_shm.close()
+            self._acquired_shm.unlink()
+            # Make additional call to this method a no-op:
+            self._acquired_shm = None
 
 class CGPAlgorithm:
     def __init__(self, individual_config, algorithm_config):
@@ -123,7 +174,9 @@ class CGPAlgorithm:
     
     def evaluate_individual(self, individual, gt_inputs, gt_outputs, idx=None):
         if idx is not None:
-            individual_outputs = self.execute_individual(individual, gt_inputs, gt_outputs, self.np_workspace[idx])
+            workspace = self.np_workspace.arr[idx]
+            print(workspace)
+            individual_outputs = self.execute_individual(individual, gt_inputs, gt_outputs, workspace)
         else:
             individual_outputs = self.execute_individual(individual, gt_inputs, gt_outputs, self.np_workspace)
         #NOTE: the line below has no effect when this function is used in multiprocessing, because it only affects the copy sent to the worker process
@@ -147,14 +200,15 @@ class CGPAlgorithm:
             gt_inputs, gt_outputs = convert_gt_to_np(gt_inputs, gt_outputs, self.algorithm_config.np_dtype, (True if self.algorithm_config.mode == "numpy_bitwise" else False), self.individual_config.inputs, self.individual_config.outputs)
 
             if self.algorithm_config.multiprocessing:
-                self.np_workspace = np.zeros((self.algorithm_config.population_size - 1, self.node_cnt + self.individual_config.inputs, len(gt_inputs[0])), dtype=self.algorithm_config.np_dtype)
+                np_workspace_tmp = np.zeros((self.algorithm_config.population_size - 1, self.node_cnt + self.individual_config.inputs, len(gt_inputs[0])), dtype=self.algorithm_config.np_dtype)
+                self.np_workspace = SharedNumpyArray(np_workspace_tmp)
             else:
                 self.np_workspace = np.zeros((self.node_cnt + self.individual_config.inputs, len(gt_inputs[0])), dtype=self.algorithm_config.np_dtype)
 
         self.best_individual = self.population[0]
 
         
-        if(self.algorithm_config.multiprocessing) and (self.algorithm_config.mode == "numpy"):
+        if(self.algorithm_config.multiprocessing) and ((self.algorithm_config.mode == "numpy") or (self.algorithm_config.mode == "numpy_bitwise")):
             self.best_individual.fitness = self.evaluate_individual(self.best_individual, gt_inputs, gt_outputs, 0)
         else:
             self.best_individual.fitness = self.evaluate_individual(self.best_individual, gt_inputs, gt_outputs)
@@ -197,5 +251,5 @@ class CGPAlgorithm:
             #    break
         end_time = time.time()
         print(f"Time taken: {end_time - start_time}")
-
+        self.np_workspace.close_and_unlink()
         return self.best_individual

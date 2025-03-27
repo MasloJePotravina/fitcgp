@@ -15,7 +15,7 @@ class Mutation:
         self.chromosome_length = individual_config.columns * individual_config.rows * (individual_config.arity + 1) + individual_config.outputs
 
         #arbitrary large number to avoid recomputation, ideally should be longer than the chromosome
-        self.random_lists_length = self.chromosome_length * 2
+        self.random_lists_length = 1000
 
         #Generates a list of mutation masks, individual selects one of these masks to mutate their genes
         #self.mutation_mask_list = [[] for _ in range(self.random_lists_length)]
