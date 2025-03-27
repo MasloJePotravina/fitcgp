@@ -3,13 +3,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="cgp_lib",
+    name="fitcgp",
     version="0.1",
     packages=find_packages(),
-    install_requires=[
-        'copy',   
-        'random'    
-    ],
+    install_requires=[],
     description="Library for Cartesian Genetic Programming",
     author="Ondrej Kováč",
     author_email="xkovac57@vutbr.cz",

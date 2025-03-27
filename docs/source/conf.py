@@ -31,7 +31,7 @@ html_static_path = ['_static']
 
 import os
 import sys
-sys.path.insert(0, '/home/ondrej/diplomka/test6(numpy-bitwise-parallel)/cgp_lib')
+sys.path.insert(0, os.path.abspath("../fitcgp"))
 print(sys.path)
-import cgp_lib
-print(cgp_lib)
+import fitcgp
+print(fitcgp)

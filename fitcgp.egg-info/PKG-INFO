@@ -1,0 +1,9 @@
+Metadata-Version: 2.2
+Name: fitcgp
+Version: 0.1
+Summary: Library for Cartesian Genetic Programming
+Author: Ondrej Kováč
+Author-email: xkovac57@vutbr.cz
+Dynamic: author
+Dynamic: author-email
+Dynamic: summary

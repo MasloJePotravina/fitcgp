@@ -1,7 +1,7 @@
-cgp_lib
+fitcgp
 =======
 
 .. toctree::
    :maxdepth: 4
 
-   cgp_lib
+   fitcgp

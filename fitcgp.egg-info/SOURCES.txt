@@ -1,0 +1,13 @@
+setup.py
+fitcgp/__init__.py
+fitcgp/cgp_algorithm.py
+fitcgp/cgp_config.py
+fitcgp/cgp_individual.py
+fitcgp/cgp_mutation.py
+fitcgp/fitness_functions.py
+fitcgp/node_functions.py
+fitcgp/utils.py
+fitcgp.egg-info/PKG-INFO
+fitcgp.egg-info/SOURCES.txt
+fitcgp.egg-info/dependency_links.txt
+fitcgp.egg-info/top_level.txt
