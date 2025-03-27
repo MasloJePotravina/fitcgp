@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cgp_lib &#8212; fitcgp  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cgp_lib package" href="cgp_lib.html" />
+    <link rel="prev" title="fitcgp documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cgp-lib">
+<h1>cgp_lib<a class="headerlink" href="#cgp-lib" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cgp_lib.html">cgp_lib package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html#module-cgp_lib.cgp_algorithm">cgp_lib.cgp_algorithm module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_algorithm.CGPAlgorithm"><code class="docutils literal notranslate"><span class="pre">CGPAlgorithm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_algorithm.CGPAlgorithm.evaluate_individual"><code class="docutils literal notranslate"><span class="pre">CGPAlgorithm.evaluate_individual()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_algorithm.CGPAlgorithm.execute_individual"><code class="docutils literal notranslate"><span class="pre">CGPAlgorithm.execute_individual()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_algorithm.CGPAlgorithm.fit"><code class="docutils literal notranslate"><span class="pre">CGPAlgorithm.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_algorithm.CGPAlgorithm.generate_random_individual"><code class="docutils literal notranslate"><span class="pre">CGPAlgorithm.generate_random_individual()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_algorithm.CGPAlgorithm.get_active_nodes"><code class="docutils literal notranslate"><span class="pre">CGPAlgorithm.get_active_nodes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_algorithm.CGPAlgorithm.init_population"><code class="docutils literal notranslate"><span class="pre">CGPAlgorithm.init_population()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html#module-cgp_lib.cgp_config">cgp_lib.cgp_config module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_config.AlgorithmConfig"><code class="docutils literal notranslate"><span class="pre">AlgorithmConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_config.AlgorithmConfig.valid_modes"><code class="docutils literal notranslate"><span class="pre">AlgorithmConfig.valid_modes</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_config.IndividualConfig"><code class="docutils literal notranslate"><span class="pre">IndividualConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html#module-cgp_lib.cgp_individual">cgp_lib.cgp_individual module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_individual.Individual"><code class="docutils literal notranslate"><span class="pre">Individual</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html#module-cgp_lib.cgp_mutation">cgp_lib.cgp_mutation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_mutation.Mutation"><code class="docutils literal notranslate"><span class="pre">Mutation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_mutation.Mutation.increase_index"><code class="docutils literal notranslate"><span class="pre">Mutation.increase_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cgp_lib.html#cgp_lib.cgp_mutation.Mutation.uniform_mutation"><code class="docutils literal notranslate"><span class="pre">Mutation.uniform_mutation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html#module-cgp_lib.fitness_functions">cgp_lib.fitness_functions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.fitness_functions.bitwise_fitness"><code class="docutils literal notranslate"><span class="pre">bitwise_fitness()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.fitness_functions.bitwise_fitness_bitwise_np"><code class="docutils literal notranslate"><span class="pre">bitwise_fitness_bitwise_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.fitness_functions.bitwise_fitness_np"><code class="docutils literal notranslate"><span class="pre">bitwise_fitness_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.fitness_functions.error_rate"><code class="docutils literal notranslate"><span class="pre">error_rate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.fitness_functions.mse_fitness"><code class="docutils literal notranslate"><span class="pre">mse_fitness()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html#module-cgp_lib.node_functions">cgp_lib.node_functions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.bitwise_and_np"><code class="docutils literal notranslate"><span class="pre">bitwise_and_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.bitwise_not_np"><code class="docutils literal notranslate"><span class="pre">bitwise_not_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.bitwise_or_np"><code class="docutils literal notranslate"><span class="pre">bitwise_or_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.bitwise_xor_np"><code class="docutils literal notranslate"><span class="pre">bitwise_xor_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.logical_and"><code class="docutils literal notranslate"><span class="pre">logical_and()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.logical_and_np"><code class="docutils literal notranslate"><span class="pre">logical_and_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.logical_not"><code class="docutils literal notranslate"><span class="pre">logical_not()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.logical_not_np"><code class="docutils literal notranslate"><span class="pre">logical_not_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.logical_or"><code class="docutils literal notranslate"><span class="pre">logical_or()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.logical_or_np"><code class="docutils literal notranslate"><span class="pre">logical_or_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.logical_xor"><code class="docutils literal notranslate"><span class="pre">logical_xor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.node_functions.logical_xor_np"><code class="docutils literal notranslate"><span class="pre">logical_xor_np()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html#module-cgp_lib.utils">cgp_lib.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.utils.convert_gt_to_np"><code class="docutils literal notranslate"><span class="pre">convert_gt_to_np()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.utils.get_function_gene"><code class="docutils literal notranslate"><span class="pre">get_function_gene()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.utils.get_input_genes"><code class="docutils literal notranslate"><span class="pre">get_input_genes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.utils.get_node_column"><code class="docutils literal notranslate"><span class="pre">get_node_column()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.utils.get_node_id"><code class="docutils literal notranslate"><span class="pre">get_node_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.utils.get_possible_input_nodes"><code class="docutils literal notranslate"><span class="pre">get_possible_input_nodes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.utils.is_function_gene"><code class="docutils literal notranslate"><span class="pre">is_function_gene()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cgp_lib.html#cgp_lib.utils.load_gt_from_file"><code class="docutils literal notranslate"><span class="pre">load_gt_from_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html#module-cgp_lib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">fitcgp</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">cgp_lib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cgp_lib.html">cgp_lib package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">fitcgp documentation</a></li>
+      <li>Next: <a href="cgp_lib.html" title="next chapter">cgp_lib package</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ondrej Kováč.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
