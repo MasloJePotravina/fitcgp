@@ -1,6 +1,11 @@
 import numpy as np
 from .node_functions import *
 from .fitness_functions import *
+import json
+from .cgp_config import IndividualConfig, AlgorithmConfig, AdvancedConfig
+from .cgp_individual import Individual
+import re
+
 
 def is_function_gene(gene_num, arity):
     """
@@ -67,6 +72,11 @@ def load_gt_from_file(file_name):
 
 #Switch default functions for numpy or numpy bitwise functions based on execution mode
 def convert_function_to_execution_mode(function, execution_mode):
+    if function is None:
+        print(
+        "NOTE: If you are loading a checkpoint with custom node functions, you have to define them and add them to the node_functions list in IndividualConfig after loading the checkpoint. Make sure to insert them onto their correct indexes.\n"
+        "NOTE: If you are loading a checkpoint with a custom fitness function, you have to define it and add it to the fitness_function in IndividualConfig after loading the checkpoint.")
+        raise ValueError("Node function cannot be None")
     function_name = function.__name__
     if execution_mode == "numpy":
         function_name += "_np"
@@ -78,3 +88,114 @@ def convert_function_to_execution_mode(function, execution_mode):
             return globals()[function_name]
     
     return function
+
+def get_function_from_name(function_name):
+    return globals().get(function_name, None)
+
+def print_report(generation, best_fitness):
+    """
+    Print the report of the current generation
+    """
+    print(f"Generation: {generation}, Best fitness: {best_fitness}")
+
+
+
+def prepare_function_name_for_saving(function_name):
+    return function_name.removesuffix("_bitwise_np").removesuffix("_np")
+
+def load_json_checkpoint(checkpoint_path):
+    """
+    Load a checkpoint from a json file
+    """
+    with open(checkpoint_path, 'r') as f:
+        checkpoint_data = json.load(f)
+
+    individual_config = IndividualConfig(
+        inputs=checkpoint_data["individual_config"]["inputs"],
+        outputs=checkpoint_data["individual_config"]["outputs"],
+        columns=checkpoint_data["individual_config"]["columns"],
+        rows=checkpoint_data["individual_config"]["rows"],
+        levels_back=checkpoint_data["individual_config"]["levels_back"],
+        node_functions=[get_function_from_name(func) for func in checkpoint_data["individual_config"]["node_functions"]],
+        arity=checkpoint_data["individual_config"]["arity"]
+    )
+
+    algorithm_config = AlgorithmConfig(
+        fitness_function=get_function_from_name(checkpoint_data["algorithm_config"]["fitness_function"]),
+        fitness_maximization=checkpoint_data["algorithm_config"]["fitness_maximization"],
+        target_fitness=checkpoint_data["algorithm_config"]["target_fitness"],
+        population_size=checkpoint_data["algorithm_config"]["population_size"],
+        generations=checkpoint_data["algorithm_config"]["generations"],
+        mutation_rate=checkpoint_data["algorithm_config"]["mutation_rate"],
+        multiprocessing=checkpoint_data["algorithm_config"]["multiprocessing"],
+        mode=checkpoint_data["algorithm_config"]["mode"]
+    )
+
+    advanced_config = AdvancedConfig(
+        report_interval=checkpoint_data["advanced_config"]["report_interval"],
+        checkpoint_interval=checkpoint_data["advanced_config"]["checkpoint_interval"],
+        checkpoint_path=checkpoint_path
+    )
+
+
+
+    best_individual = Individual(
+        chromosome=checkpoint_data["best_individual"],
+        fitness=checkpoint_data["best_fitness"]
+    )
+    return individual_config, algorithm_config, advanced_config, best_individual
+
+
+def save_json_checkpoint(individual_config, algorithm_config, advanced_config, best_individual):
+    """
+    save a checkpoint of the current state of the algorithm
+    """
+    checkpoint_data = {
+        "individual_config": {
+            "inputs": individual_config.inputs,
+            "outputs": individual_config.outputs,
+            "columns": individual_config.columns,
+            "rows": individual_config.rows,
+            "levels_back": individual_config.levels_back,
+            "node_functions": [prepare_function_name_for_saving(func.__name__) for func in individual_config.node_functions],
+            "arity": individual_config.arity
+        },
+        "algorithm_config": {
+            "fitness_function": prepare_function_name_for_saving(algorithm_config.fitness_function.__name__),
+            "fitness_maximization": algorithm_config.fitness_maximization,
+            "target_fitness": algorithm_config.target_fitness,
+            "population_size": algorithm_config.population_size,
+            "generations": algorithm_config.generations,
+            "mutation_rate": algorithm_config.mutation_rate,
+            "multiprocessing": algorithm_config.multiprocessing,
+            "mode": algorithm_config.mode
+        },
+        "advanced_config": {
+            "report_interval": advanced_config.report_interval,
+            "checkpoint_interval": advanced_config.checkpoint_interval,
+            "checkpoint_path": advanced_config.checkpoint_path
+        },
+        "best_fitness": best_individual.fitness,
+        "best_individual": best_individual.chromosome
+    }
+
+    with open(advanced_config.checkpoint_path, 'w') as f:
+        json.dump(checkpoint_data, f, indent=4)
+    
+    with open(advanced_config.checkpoint_path, 'r+') as f:
+        content = f.read()
+
+        # Use regex to find the "best_individual" list and remove the newlines
+        content = re.sub(r'("best_individual": \[)([\s\S]*?)(\])', 
+                 lambda m: m.group(1) + ''.join(m.group(2).splitlines()).replace(" ", "") + m.group(3), 
+                 content)
+        f.seek(0)
+        f.write(content)
+        f.truncate()
+
+def save_checkpoint(individual_config, algorithm_config, advanced_config, best_individual):
+    #if path ends with .json
+    if advanced_config.checkpoint_path.endswith(".json"):
+        save_json_checkpoint(individual_config, algorithm_config, advanced_config, best_individual)
+
+

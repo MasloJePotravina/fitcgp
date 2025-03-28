@@ -6,8 +6,17 @@ import time
 from multiprocessing import Pool, shared_memory, current_process
 
 from .cgp_individual import Individual
-from .utils import is_function_gene, get_possible_input_nodes, get_function_gene, get_input_genes, convert_gt_to_np, convert_function_to_execution_mode
+from .utils import (
+    is_function_gene, 
+    get_possible_input_nodes, 
+    get_function_gene, 
+    get_input_genes, 
+    convert_gt_to_np, 
+    convert_function_to_execution_mode, 
+    print_report, 
+    save_checkpoint)
 from .cgp_mutation import Mutation
+from.cgp_config import AdvancedConfig
 
 #taken from: https://stackoverflow.com/questions/31704081/shared-arrays-in-multiprocessing-python
 class SharedNumpyArray:
@@ -61,17 +70,20 @@ class SharedNumpyArray:
             self._acquired_shm = None
 
 class CGPAlgorithm:
-    def __init__(self, individual_config, algorithm_config):
+    def __init__(self, individual_config, algorithm_config, advanced_config = None, best_individual = None):
         self.individual_config = individual_config
         self.algorithm_config = algorithm_config
+        self.advanced_config = advanced_config if advanced_config is not None else AdvancedConfig()
         self.population = []
-        self.best_individual = None
+        self.best_individual = best_individual
         self.node_cnt = individual_config.columns * individual_config.rows #store number of nodes in each individual to avoid recomputation
         self.chromosome_length = self.node_cnt * (individual_config.arity + 1) + individual_config.outputs #store length of chromosome to avoid recomputation
         self.np_workspace = None #numpy workspace for numpy without multiprocessing
         self.shm_name = None #shared memory name for numpy with multiprocessing
         self.individual_config.node_functions = [convert_function_to_execution_mode(func, algorithm_config.mode) for func in individual_config.node_functions]
         self.algorithm_config.fitness_function = convert_function_to_execution_mode(algorithm_config.fitness_function, algorithm_config.mode)
+        
+
 
     def generate_random_individual(self):
         """
@@ -186,14 +198,11 @@ class CGPAlgorithm:
     
     def fit(self, gt_inputs, gt_outputs):
 
-        #Initialize population
-        self.init_population()
-
         #Set comparison function for fitness based on whether we are maximizing or minimizing
         fitness_compare = max if self.algorithm_config.fitness_maximization else min
 
         #Create mutation object, that will handle mutation of individuals
-        mutation = Mutation(self.individual_config)
+        mutation = Mutation(self.individual_config, self.algorithm_config.mutation_rate, self.advanced_config.randomness_level)
 
         #If the user is working with numpy arrays (with or without bitwise parallelism), convert the ground truth to numpy arrays
         if self.algorithm_config.mode == "numpy" or self.algorithm_config.mode == "numpy_bitwise":
@@ -205,13 +214,27 @@ class CGPAlgorithm:
             else:
                 self.np_workspace = np.zeros((self.node_cnt + self.individual_config.inputs, len(gt_inputs[0])), dtype=self.algorithm_config.np_dtype)
 
-        self.best_individual = self.population[0]
 
-        
-        if(self.algorithm_config.multiprocessing) and ((self.algorithm_config.mode == "numpy") or (self.algorithm_config.mode == "numpy_bitwise")):
-            self.best_individual.fitness = self.evaluate_individual(self.best_individual, gt_inputs, gt_outputs, 0)
+        #Starting from scratch
+        if self.best_individual is None:
+            #Initialize population
+            self.init_population()
+
+            self.best_individual = self.population[0]
+
+            if(self.algorithm_config.multiprocessing) and ((self.algorithm_config.mode == "numpy") or (self.algorithm_config.mode == "numpy_bitwise")):
+                self.best_individual.fitness = self.evaluate_individual(self.best_individual, gt_inputs, gt_outputs, 0)
+            else:
+                self.best_individual.fitness = self.evaluate_individual(self.best_individual, gt_inputs, gt_outputs)
+        #Starting from a checkpoint
         else:
-            self.best_individual.fitness = self.evaluate_individual(self.best_individual, gt_inputs, gt_outputs)
+            new_population = [self.best_individual]
+            for _ in range(self.algorithm_config.population_size - 1):
+                parent = self.best_individual
+                new_individual = mutation.uniform_mutation(parent, self.individual_config)
+                new_population.append(new_individual)
+            self.population = new_population
+
 
         
         
@@ -243,7 +266,14 @@ class CGPAlgorithm:
                 #new_individual = self.config.mutation_function(individual = parent, cgp_config = self.config)
                 new_population.append(new_individual)
             self.population = new_population
-            print(f"Generation {i}, best fitness: {self.best_individual.fitness}")
+
+
+            if i % self.advanced_config.report_interval == 0 and self.advanced_config.report_interval > 0:
+                print_report(i, self.best_individual.fitness)
+
+            if i % self.advanced_config.checkpoint_interval == 0 and self.advanced_config.checkpoint_interval > 0:
+                #Save checkpoint
+                save_checkpoint(self.individual_config, self.algorithm_config, self.advanced_config, self.best_individual)
 
             #if i == 5:  # Stop profiling after Generation 5
             #    profiler.disable()  # Stop profiling
@@ -251,5 +281,7 @@ class CGPAlgorithm:
             #    break
         end_time = time.time()
         print(f"Time taken: {end_time - start_time}")
-        self.np_workspace.close_and_unlink()
+        #if np_workspace is object of SharedNumpyArray, close and unlink it
+        if isinstance(self.np_workspace, SharedNumpyArray):
+            self.np_workspace.close_and_unlink()
         return self.best_individual

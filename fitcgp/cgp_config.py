@@ -43,6 +43,7 @@ class AlgorithmConfig:
                  target_fitness: float,
                  population_size: int, 
                  generations: int,
+                 mutation_rate: float = 0.05,
                  multiprocessing: bool = False,
                  mode: str = "default",
                  np_dtype = np.int64):
@@ -51,11 +52,24 @@ class AlgorithmConfig:
         self.target_fitness = target_fitness
         self.population_size = population_size
         self.generations = generations
+        self.mutation_rate = mutation_rate
         self.multiprocessing = multiprocessing
         self.mode = mode
         if mode not in self.valid_modes:
             raise ValueError(f"Invalid mode {mode}. Valid modes are {self.valid_modes}")
         self.np_dtype = np_dtype
+
+class AdvancedConfig:
+    def __init__(self,
+                 report_interval: int = 100,
+                 checkpoint_interval: int = 1000,
+                 checkpoint_path: str = "./checkpoint.json",
+                 randomness_level: int = 1000):
+        self.report_interval = report_interval #How many generations between printed reports
+        self.checkpoint_interval = checkpoint_interval #How many generations between file checkpoints
+        self.checkpoint_path = checkpoint_path #Name of the checkpoint file
+        self.randomness_level = randomness_level
+
 
 
 
